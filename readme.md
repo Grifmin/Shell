@@ -7,7 +7,7 @@ Use the following chrome extension for this mod: [voilentmonkey](https://violent
 // @match       *://*shellshock.io/*
 // @grant       GM_xmlhttpRequest
 // @version     1.0
-// @author      Grif#6311
+// @author      Grif
 // @description Return the legacy default weapons
 // ==/UserScript==
 
@@ -46,7 +46,7 @@ const patch_sounds = () => {
 
 
 console.log = function () {
-  if (arguments[0]?.includes("sounds loaded")) {
+  if (typeof arguments[0] == 'string' && arguments[0]?.includes("sounds loaded")) {
     patch_legacy();
     patch_sounds();
   }
