@@ -33,7 +33,7 @@ const sound_list = [
   'eggk47_dry_fire','eggk47_fire','eggk47_full_cycle','eggk47_insert_mag','eggk47_remove_mag',
   'm24_bolt_close','m24_bolt_open','m24_fire',
   'rpegg_fire','rpegg_load','rpegg_rocket_fly','rpegg_rocket_hit','rpegg_rocket_poof',
-  'smg_cycle','smg_fire',
+  'smg_cycle','smg_fire','grenade','grenade_pin','grenade_beep',
 ];
 
 const patch_sounds = () => {
