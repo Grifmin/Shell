@@ -1,5 +1,5 @@
 # Legacy mod
-Use the following chrome extension for this mod: [voilentmonkey](https://violentmonkey.github.io/)
+Use the following chrome extension for these mods: [voilentmonkey](https://violentmonkey.github.io/)
 <details> 
   <summary>Legacy mod</summary>
 
@@ -90,25 +90,20 @@ sound_list.forEach((sound) => {
 // @description Allows you to search maps (wow)
 // ==/UserScript==
 
-
 /*update template*/
-let inp = document.createElement('div');
-inp.innerHTML = '<input id="map_name_inp" :value="mapName" placeholder="map name" @change="onMapInpChange($event)" v-on:keyup="onMapNameKeyUp($event)" class="ss_select" style="margin-left: 5%;">'.trim();
-inp = inp.children[0];
-
 let loop = setInterval(function() {
   if (document.getElementById('create-private-game-template')) {
     let src = document.getElementById('create-private-game-template').innerHTML.replace(/(<div id="private_maps")/gm,
-      `<input id="map_name_inp" :value="mapName" placeholder="map name" @change="onMapInpChange(\$event)" v-on:keyup="onMapNameKeyUp(\$event)" class="ss_select" style="margin-left: 5%;">\n$1`
+      `<input id="map_name_inp" :value="mapName" placeholder="Map Name" @change="onMapInpChange(\$event)" v-on:keyup="onMapNameKeyUp(\$event)" class="ss_select" style="margin-left: 5%;">\n$1`
     );
     document.getElementById('create-private-game-template').innerHTML = src;
     clearInterval(loop);
   }
 },1);
 
+/*replacing functions*/
 let check = setInterval(function() {
   if (window.comp_create_private_game_popup) {
-    /*replacing functions*/
     let main = window.comp_create_private_game_popup;
     main.props.push('mapName');
     let func = main.methods;
@@ -120,7 +115,7 @@ let check = setInterval(function() {
 
     func.onMapNameKeyUp = function(event) {
       this.mapName = event.target.value;
-      this.handleKeydown(event);
+      this.boxedit = true;
     }
 
     func.old_selectMapForPickedGameType = func.selectMapForPickedGameType;
@@ -132,21 +127,29 @@ let check = setInterval(function() {
     let modified = func.handleKeydown.toString().replace(/(preventDefault\(\);)/gm, `$1
       if (!this.mapName || this.arrowed) {this.mapName = '', this.arrowed = false}
       if (keyPressed == 'backspace' && e.ctrlKey) this.mapName = '';
-      if (e.target?.id != 'map_name_inp') {
+      if (!this.boxedit) {
         let k = keyPressed.replace('key', '');
-        // console.log('mapname', keyPressed);
-        if (k == 'backspace') return this.mapName = this.mapName.substring(0, Math.max(0, this.mapName.length-1))
-        this.mapName += k.length == 1? k : '';
-        if (k == 'space' && this.mapName.length > 0) this.mapName += ' ';
+        if (k == 'backspace') return this.mapName = this.mapName.substring(0, Math.max(0, this.mapName.length-1));
+        if (e.target?.id != 'map_name_inp') {
+          // console.log('mapname', keyPressed);
+          this.mapName += k.length == 1? k : '';
+          if (k == 'space' && this.mapName.length > 0) this.mapName += ' ';
+        }
+        this.mapName = this.mapName.substring(0, Math.max(...vueData.maps.map(x => x.name.length)));
+        if (!'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 '.includes(k)) return
       }
-    `).replace(/el => el\.name\.toLowerCase\(\)\.startsWith\(keyPressed\.replace\('key', ''\)\)/gm, `
-      (map) => map.name.toLowerCase().startsWith(this.mapName.toLowerCase()) ||
-      map.filename.startsWith(this.mapName.toLowerCase()) ||
-      (this.mapName.length >1 && map.name.toLowerCase().includes(this.mapName.toLowerCase()))
+      this.boxedit = false;
+    `).replace(/let idx = vueApp\.maps\.findIndex\(el => el\.name\.toLowerCase\(\)\.startsWith\(keyPressed\.replace\('key', ''\)\)\);/gm, `
+      let idx = [
+        vueApp.maps.findIndex(map => map.name.toLowerCase().startsWith(this.mapName.toLowerCase()) ),
+        vueApp.maps.findIndex(map => map.filename.startsWith(this.mapName.toLowerCase()) ),
+        vueApp.maps.findIndex(map => (this.mapName.length > 1 && map.name.toLowerCase().includes(this.mapName.toLowerCase())) )
+      ].find(i => i > -1) || -1
     `).replace(/handleKeydown\([A-z]+\) {/gm, '');
     func.handleKeydown = new Function('e', modified.substring(0, modified.length-1));
     clearInterval(check);
   }
-},1)
+},1);
+
 ```
 </details>
