@@ -40,13 +40,20 @@ const sound_list = [
 ];
 
 const patch_sounds = () => {
-  sound_list.forEach((sfx) => {
-    BAWK.sounds[sfx].buffer = sounds[sfx];
-    BAWK.sounds[sfx].start = 0;
-    BAWK.sounds[sfx].end = BAWK.sounds[sfx].buffer.duration
-  })
+  // window.current_sounds = BAWK.sounds; // old sfx
+  try {
+    sound_list.forEach((sfx) => {
+      if (BAWK.sounds[sfx] == undefined && BAWK.sounds['gun_'+sfx]) sfx = "gun_" + sfx // why did this need changing :/
+      if (BAWK.sounds[sfx]) {
+          console.log(sfx)
+          BAWK.sounds[sfx].buffer = sounds[sfx.replace('gun_', '')]; // is this what it means to be a shitty js developer?
+          BAWK.sounds[sfx].start = 0;
+          BAWK.sounds[sfx].end = BAWK.sounds[sfx].buffer.duration
+      }
+    })
+    // window.old_sounds = BAWK.sounds; // new sfx. future proofing incase i want to beable to toggle between them (never going to happen)
+  } catch (err) { console.log(`Error loading sounds: ${err}`) }
 }
-
 
 console.log = function () {
   if (typeof arguments[0] == 'string' && arguments[0]?.includes("sounds loaded")) {
