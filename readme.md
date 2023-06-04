@@ -45,7 +45,6 @@ const patch_sounds = () => {
     sound_list.forEach((sfx) => {
       if (BAWK.sounds[sfx] == undefined && BAWK.sounds['gun_'+sfx]) sfx = "gun_" + sfx // why did this need changing :/
       if (BAWK.sounds[sfx]) {
-          console.log(sfx)
           BAWK.sounds[sfx].buffer = sounds[sfx.replace('gun_', '')]; // is this what it means to be a shitty js developer?
           BAWK.sounds[sfx].start = 0;
           BAWK.sounds[sfx].end = BAWK.sounds[sfx].buffer.duration
