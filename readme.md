@@ -36,18 +36,18 @@ const sound_list = [
   'eggk47_dry_fire','eggk47_fire','eggk47_full_cycle','eggk47_insert_mag','eggk47_remove_mag',
   'm24_bolt_close','m24_bolt_open','m24_fire',
   'rpegg_fire','rpegg_load','rpegg_rocket_fly','rpegg_rocket_hit','rpegg_rocket_poof',
-  'smg_cycle','smg_fire','grenade','grenade_pin','grenade_beep',
+  'smg_cycle','smg_fire','grenade','grenade_pin','grenade_beep', 'ammo'
 ];
 
 const patch_sounds = () => {
   // window.current_sounds = BAWK.sounds; // old sfx
   try {
     sound_list.forEach((sfx) => {
-      if (BAWK.sounds[sfx] == undefined && BAWK.sounds['gun_'+sfx]) sfx = "gun_" + sfx // why did this need changing :/
+      if (BAWK.sounds[sfx] == undefined && BAWK.sounds['gun_'+sfx]) {sfx = "gun_" + sfx;} // why did this need changing :/
       if (BAWK.sounds[sfx]) {
           BAWK.sounds[sfx].buffer = sounds[sfx.replace('gun_', '')]; // is this what it means to be a shitty js developer?
           BAWK.sounds[sfx].start = 0;
-          BAWK.sounds[sfx].end = BAWK.sounds[sfx].buffer.duration
+          BAWK.sounds[sfx].end = BAWK.sounds[sfx].buffer.duration;
       }
     })
     // window.old_sounds = BAWK.sounds; // new sfx. future proofing incase i want to beable to toggle between them (never going to happen)
